@@ -1,7 +1,8 @@
 <template>
   <div id="add-blog">
       <h2>Add a New Blog Post</h2>
-      <form>
+
+      <form v-if="!submitted">
             <label for="">Blog Title:</label>
             <input type="text" v-model.lazy="blog.title" required />
             <label for="">Blog Content:</label>
@@ -28,6 +29,9 @@
         <button v-on:click.prevent="post">Post</button>
 
       </form>
+      <div v-if="submitted">
+          <h3>Thanks for adding your post</h3>
+      </div>
 
       <div id="preview">
           <h3>Preview Blog</h3>
@@ -36,7 +40,7 @@
           <p>{{ blog.content }} </p>
           <p>Blog categories:</p>
           <ul>
-              <li v-for="category in blog.categories" :key="category">{{category}}</li>
+              <li v-for="category in blog.categories" :key="category">{{ category }}</li>
           </ul>
           <p>Author: {{ blog.author }}</p>
       </div>
@@ -55,12 +59,27 @@ export default {
                 categories: [],
                 author: ''
             },
-            authors: ['Ms. Cat', "Mr. Giraffe", "Mr. Panda"]
+            authors: ['Ms. Cat', "Mr. Giraffe", "Mr. Panda"],
+            submitted: false
         }
     },
     methods: {
         post: function(){
-            
+            fetch('http://jsonplaceholder.typicode.com/posts', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: this.blog.title,
+                    body: this.blog.content,
+                    userId: 1
+                }),
+                headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+                },
+            }).then(response => response.json())
+            .then(json => {
+                this.submitted = true
+                console.log(json)
+                })
         }
     }
 }
