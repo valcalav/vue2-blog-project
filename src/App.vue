@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    
+    <addBlog/>
   </div>
 </template>
 
